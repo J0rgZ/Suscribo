@@ -14,6 +14,9 @@ class HistorialPago {
     required this.fechaRegistro,
     required this.tipoPago,
     required this.cicloPago,
+    this.numeroOperacion,
+    this.metodoPago,
+    this.rutaComprobante,
   });
 
   /// Identificador único del registro generado por Isar.
@@ -38,5 +41,14 @@ class HistorialPago {
   /// Ciclo vigente al momento de registrar el pago.
   @Enumerated(EnumType.name)
   CicloPago cicloPago;
+
+  /// Número de operación o referencia proporcionado por el usuario.
+  String? numeroOperacion;
+
+  /// Método de pago utilizado (tarjeta, transferencia, efectivo, etc.).
+  String? metodoPago;
+
+  /// Ruta local del comprobante asociado (imagen o PDF).
+  String? rutaComprobante;
 }
 

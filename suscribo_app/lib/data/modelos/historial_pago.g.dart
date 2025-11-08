@@ -28,23 +28,38 @@ const HistorialPagoSchema = CollectionSchema(
       name: r'fechaRegistro',
       type: IsarType.dateTime,
     ),
-    r'montoPagado': PropertySchema(
+    r'metodoPago': PropertySchema(
       id: 2,
+      name: r'metodoPago',
+      type: IsarType.string,
+    ),
+    r'montoPagado': PropertySchema(
+      id: 3,
       name: r'montoPagado',
       type: IsarType.double,
     ),
     r'nombre': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'nombre',
       type: IsarType.string,
     ),
+    r'numeroOperacion': PropertySchema(
+      id: 5,
+      name: r'numeroOperacion',
+      type: IsarType.string,
+    ),
     r'pagoId': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'pagoId',
       type: IsarType.long,
     ),
+    r'rutaComprobante': PropertySchema(
+      id: 7,
+      name: r'rutaComprobante',
+      type: IsarType.string,
+    ),
     r'tipoPago': PropertySchema(
-      id: 5,
+      id: 8,
       name: r'tipoPago',
       type: IsarType.string,
       enumMap: _HistorialPagotipoPagoEnumValueMap,
@@ -71,7 +86,25 @@ int _historialPagoEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.cicloPago.name.length * 3;
+  {
+    final value = object.metodoPago;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.nombre.length * 3;
+  {
+    final value = object.numeroOperacion;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.rutaComprobante;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.tipoPago.name.length * 3;
   return bytesCount;
 }
@@ -84,10 +117,13 @@ void _historialPagoSerialize(
 ) {
   writer.writeString(offsets[0], object.cicloPago.name);
   writer.writeDateTime(offsets[1], object.fechaRegistro);
-  writer.writeDouble(offsets[2], object.montoPagado);
-  writer.writeString(offsets[3], object.nombre);
-  writer.writeLong(offsets[4], object.pagoId);
-  writer.writeString(offsets[5], object.tipoPago.name);
+  writer.writeString(offsets[2], object.metodoPago);
+  writer.writeDouble(offsets[3], object.montoPagado);
+  writer.writeString(offsets[4], object.nombre);
+  writer.writeString(offsets[5], object.numeroOperacion);
+  writer.writeLong(offsets[6], object.pagoId);
+  writer.writeString(offsets[7], object.rutaComprobante);
+  writer.writeString(offsets[8], object.tipoPago.name);
 }
 
 HistorialPago _historialPagoDeserialize(
@@ -101,11 +137,14 @@ HistorialPago _historialPagoDeserialize(
             reader.readStringOrNull(offsets[0])] ??
         CicloPago.SEMANAL,
     fechaRegistro: reader.readDateTime(offsets[1]),
-    montoPagado: reader.readDouble(offsets[2]),
-    nombre: reader.readString(offsets[3]),
-    pagoId: reader.readLong(offsets[4]),
+    metodoPago: reader.readStringOrNull(offsets[2]),
+    montoPagado: reader.readDouble(offsets[3]),
+    nombre: reader.readString(offsets[4]),
+    numeroOperacion: reader.readStringOrNull(offsets[5]),
+    pagoId: reader.readLong(offsets[6]),
+    rutaComprobante: reader.readStringOrNull(offsets[7]),
     tipoPago: _HistorialPagotipoPagoValueEnumMap[
-            reader.readStringOrNull(offsets[5])] ??
+            reader.readStringOrNull(offsets[8])] ??
         TipoPago.SUSCRIPCION,
   );
   object.id = id;
@@ -126,12 +165,18 @@ P _historialPagoDeserializeProp<P>(
     case 1:
       return (reader.readDateTime(offset)) as P;
     case 2:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 5:
+      return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readLong(offset)) as P;
+    case 7:
+      return (reader.readStringOrNull(offset)) as P;
+    case 8:
       return (_HistorialPagotipoPagoValueEnumMap[
               reader.readStringOrNull(offset)] ??
           TipoPago.SUSCRIPCION) as P;
@@ -504,6 +549,160 @@ extension HistorialPagoQueryFilter
   }
 
   QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'metodoPago',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'metodoPago',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metodoPago',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'metodoPago',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'metodoPago',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'metodoPago',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'metodoPago',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'metodoPago',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'metodoPago',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'metodoPago',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metodoPago',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      metodoPagoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'metodoPago',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
       montoPagadoEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -706,6 +905,160 @@ extension HistorialPagoQueryFilter
   }
 
   QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'numeroOperacion',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'numeroOperacion',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroOperacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'numeroOperacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'numeroOperacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'numeroOperacion',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'numeroOperacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'numeroOperacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'numeroOperacion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'numeroOperacion',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroOperacion',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      numeroOperacionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'numeroOperacion',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
       pagoIdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -757,6 +1110,160 @@ extension HistorialPagoQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'rutaComprobante',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'rutaComprobante',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'rutaComprobante',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'rutaComprobante',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'rutaComprobante',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'rutaComprobante',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'rutaComprobante',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'rutaComprobante',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'rutaComprobante',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'rutaComprobante',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'rutaComprobante',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterFilterCondition>
+      rutaComprobanteIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'rutaComprobante',
+        value: '',
       ));
     });
   }
@@ -933,6 +1440,19 @@ extension HistorialPagoQuerySortBy
     });
   }
 
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy> sortByMetodoPago() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metodoPago', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      sortByMetodoPagoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metodoPago', Sort.desc);
+    });
+  }
+
   QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy> sortByMontoPagado() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'montoPagado', Sort.asc);
@@ -958,6 +1478,20 @@ extension HistorialPagoQuerySortBy
     });
   }
 
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      sortByNumeroOperacion() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numeroOperacion', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      sortByNumeroOperacionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numeroOperacion', Sort.desc);
+    });
+  }
+
   QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy> sortByPagoId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'pagoId', Sort.asc);
@@ -967,6 +1501,20 @@ extension HistorialPagoQuerySortBy
   QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy> sortByPagoIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'pagoId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      sortByRutaComprobante() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rutaComprobante', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      sortByRutaComprobanteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rutaComprobante', Sort.desc);
     });
   }
 
@@ -1025,6 +1573,19 @@ extension HistorialPagoQuerySortThenBy
     });
   }
 
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy> thenByMetodoPago() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metodoPago', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      thenByMetodoPagoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metodoPago', Sort.desc);
+    });
+  }
+
   QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy> thenByMontoPagado() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'montoPagado', Sort.asc);
@@ -1050,6 +1611,20 @@ extension HistorialPagoQuerySortThenBy
     });
   }
 
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      thenByNumeroOperacion() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numeroOperacion', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      thenByNumeroOperacionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'numeroOperacion', Sort.desc);
+    });
+  }
+
   QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy> thenByPagoId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'pagoId', Sort.asc);
@@ -1059,6 +1634,20 @@ extension HistorialPagoQuerySortThenBy
   QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy> thenByPagoIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'pagoId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      thenByRutaComprobante() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rutaComprobante', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QAfterSortBy>
+      thenByRutaComprobanteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rutaComprobante', Sort.desc);
     });
   }
 
@@ -1092,6 +1681,13 @@ extension HistorialPagoQueryWhereDistinct
     });
   }
 
+  QueryBuilder<HistorialPago, HistorialPago, QDistinct> distinctByMetodoPago(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'metodoPago', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<HistorialPago, HistorialPago, QDistinct>
       distinctByMontoPagado() {
     return QueryBuilder.apply(this, (query) {
@@ -1106,9 +1702,25 @@ extension HistorialPagoQueryWhereDistinct
     });
   }
 
+  QueryBuilder<HistorialPago, HistorialPago, QDistinct>
+      distinctByNumeroOperacion({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'numeroOperacion',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<HistorialPago, HistorialPago, QDistinct> distinctByPagoId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'pagoId');
+    });
+  }
+
+  QueryBuilder<HistorialPago, HistorialPago, QDistinct>
+      distinctByRutaComprobante({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'rutaComprobante',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -1141,6 +1753,12 @@ extension HistorialPagoQueryProperty
     });
   }
 
+  QueryBuilder<HistorialPago, String?, QQueryOperations> metodoPagoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'metodoPago');
+    });
+  }
+
   QueryBuilder<HistorialPago, double, QQueryOperations> montoPagadoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'montoPagado');
@@ -1153,9 +1771,23 @@ extension HistorialPagoQueryProperty
     });
   }
 
+  QueryBuilder<HistorialPago, String?, QQueryOperations>
+      numeroOperacionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'numeroOperacion');
+    });
+  }
+
   QueryBuilder<HistorialPago, int, QQueryOperations> pagoIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'pagoId');
+    });
+  }
+
+  QueryBuilder<HistorialPago, String?, QQueryOperations>
+      rutaComprobanteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'rutaComprobante');
     });
   }
 

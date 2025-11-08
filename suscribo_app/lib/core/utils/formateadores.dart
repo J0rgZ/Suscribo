@@ -4,9 +4,12 @@ import 'package:intl/intl.dart';
 class FormateadorMoneda {
   FormateadorMoneda._();
 
-  static final NumberFormat _formatoSoles =
-      NumberFormat.currency(locale: 'es_PE', symbol: 'S/ ');
+  static final NumberFormat _formatoNumero =
+      NumberFormat.currency(locale: 'es_PE', symbol: '', decimalDigits: 2);
 
-  static String enSoles(double monto) => _formatoSoles.format(monto);
+  static String enSoles(double monto) {
+    final numero = _formatoNumero.format(monto).trim();
+    return 'S/ $numero';
+  }
 }
 

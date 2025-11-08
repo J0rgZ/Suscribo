@@ -25,82 +25,91 @@ class ResumenPagos extends StatelessWidget {
     final esquema = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              esquema.primary.withOpacity(0.85),
-              esquema.secondary.withOpacity(0.85),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: esquema.primary.withOpacity(0.2),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Resumen mensual',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: esquema.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                _MetricaPrincipal(
-                  titulo: 'Pagos activos',
-                  valor: '$totalPagos',
-                  icono: Icons.list_alt_rounded,
-                  colorTexto: esquema.onPrimary,
-                ),
-                const SizedBox(width: 16),
-                _MetricaPrincipal(
-                  titulo: 'Gasto mensual',
-                  valor: FormateadorMoneda.enSoles(gastoMensual),
-                  icono: Icons.account_balance_wallet_rounded,
-                  colorTexto: esquema.onPrimary,
-                ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: Container(
+          padding: const EdgeInsets.all(22),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                esquema.primary.withOpacity(0.92),
+                esquema.secondary.withOpacity(0.92),
               ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(height: 24),
-            Container(
-              decoration: BoxDecoration(
-                color: esquema.surface,
-                borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.white.withOpacity(0.06)),
+            boxShadow: [
+              BoxShadow(
+                color: esquema.primary.withOpacity(0.25),
+                blurRadius: 24,
+                offset: const Offset(0, 16),
               ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Resumen mensual',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: esquema.onPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: 20),
+              Row(
                 children: [
-                  _FilaDetalle(
-                    titulo: 'Suscripciones',
-                    cantidad: totalSuscripciones,
-                    monto: FormateadorMoneda.enSoles(gastoSuscripciones),
-                    icono: Icons.subscriptions_outlined,
-                    color: esquema.primary,
+                  _MetricaPrincipal(
+                    titulo: 'Pagos activos',
+                    valor: '$totalPagos',
+                    icono: Icons.playlist_add_check_rounded,
+                    colorTexto: esquema.onPrimary,
                   ),
-                  const Divider(height: 24),
-                  _FilaDetalle(
-                    titulo: 'Servicios',
-                    cantidad: totalServicios,
-                    monto: FormateadorMoneda.enSoles(gastoServicios),
-                    icono: Icons.miscellaneous_services_outlined,
-                    color: esquema.secondary,
+                  const SizedBox(width: 16),
+                  _MetricaPrincipal(
+                    titulo: 'Gasto mensual',
+                    valor: FormateadorMoneda.enSoles(gastoMensual),
+                    icono: Icons.account_balance_wallet_rounded,
+                    colorTexto: esquema.onPrimary,
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 28),
+              Container(
+                decoration: BoxDecoration(
+                  color: esquema.surface.withOpacity(0.92),
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                child: Column(
+                  children: [
+                    _FilaDetalle(
+                      titulo: 'Suscripciones',
+                      cantidad: totalSuscripciones,
+                      monto: FormateadorMoneda.enSoles(gastoSuscripciones),
+                      icono: Icons.subscriptions_rounded,
+                      color: esquema.primary,
+                    ),
+                    const SizedBox(height: 16),
+                    Divider(
+                      height: 1,
+                      color: esquema.outlineVariant.withOpacity(0.4),
+                    ),
+                    const SizedBox(height: 16),
+                    _FilaDetalle(
+                      titulo: 'Servicios',
+                      cantidad: totalServicios,
+                      monto: FormateadorMoneda.enSoles(gastoServicios),
+                      icono: Icons.settings_input_component_rounded,
+                      color: esquema.secondary,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -179,12 +188,15 @@ class _FilaDetalle extends StatelessWidget {
             children: [
               Text(
                 titulo,
-                style: texto.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+                style: texto.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: texto.titleMedium?.color?.withOpacity(0.9),
+                ),
               ),
               Text(
                 '$cantidad pagos',
                 style: texto.bodyMedium?.copyWith(
-                  color: texto.bodyMedium?.color?.withOpacity(0.7),
+                  color: texto.bodyMedium?.color?.withOpacity(0.65),
                 ),
               ),
             ],
@@ -192,7 +204,10 @@ class _FilaDetalle extends StatelessWidget {
         ),
         Text(
           monto,
-          style: texto.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          style: texto.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: texto.titleLarge?.color?.withOpacity(0.95),
+          ),
         ),
       ],
     );

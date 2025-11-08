@@ -78,7 +78,6 @@ class ServicioPagos {
     final isar = await _isar;
     await isar.writeTxn(() async {
       await isar.pagoRecurrentes.delete(id);
-      await isar.historialPagos.filter().pagoIdEqualTo(id).deleteAll();
     });
     await _servicioNotificaciones.cancelarNotificacion(id);
     debugPrint('Pago con Id $id eliminado y notificación cancelada.');
@@ -88,6 +87,9 @@ class ServicioPagos {
   Future<void> marcarComoPagado(
     PagoRecurrente pago, {
     double? montoPagado,
+    String? numeroOperacion,
+    String? metodoPago,
+    String? rutaComprobante,
   }) async {
     final isar = await _isar;
 
@@ -111,6 +113,9 @@ class ServicioPagos {
           fechaRegistro: DateTime.now(),
           tipoPago: pago.tipoPago,
           cicloPago: pago.cicloPago,
+          numeroOperacion: numeroOperacion,
+          metodoPago: metodoPago,
+          rutaComprobante: rutaComprobante,
         ),
       );
     });

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -90,6 +92,40 @@ class _TarjetaHistorial extends StatelessWidget {
                 ),
               ],
             ),
+            if (registro.numeroOperacion != null &&
+                registro.numeroOperacion!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(Icons.receipt_long_outlined,
+                      size: 18, color: esquema.onSurfaceVariant),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Operación: ${registro.numeroOperacion}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (registro.metodoPago != null &&
+                registro.metodoPago!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(Icons.payment_rounded,
+                      size: 18, color: esquema.onSurfaceVariant),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Método: ${registro.metodoPago}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 12),
             Row(
               children: [
@@ -109,6 +145,28 @@ class _TarjetaHistorial extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
             ),
+            if (registro.rutaComprobante != null &&
+                File(registro.rutaComprobante!).existsSync()) ...[
+              const SizedBox(height: 16),
+              GestureDetector(
+                onTap: () => _mostrarComprobante(context, registro),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(
+                    File(registro.rutaComprobante!),
+                    height: 160,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: () => _mostrarComprobante(context, registro),
+                icon: const Icon(Icons.visibility_rounded),
+                label: const Text('Ver comprobante'),
+              ),
+            ],
           ],
         ),
       ),
@@ -135,6 +193,52 @@ class _TarjetaHistorial extends StatelessWidget {
       case CicloPago.ANUAL:
         return 'Anual';
     }
+  }
+
+  void _mostrarComprobante(
+    BuildContext context,
+    HistorialPago registro,
+  ) {
+    final ruta = registro.rutaComprobante;
+    if (ruta == null || !File(ruta).existsSync()) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Comprobante',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ],
+              ),
+            ),
+            Flexible(
+              child: InteractiveViewer(
+                child: Image.file(
+                  File(ruta),
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
   }
 }
 
