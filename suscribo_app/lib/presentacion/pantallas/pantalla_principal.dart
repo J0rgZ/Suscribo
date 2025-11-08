@@ -8,6 +8,7 @@ import 'package:isar/isar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../app/rutas_app.dart';
 import '../../data/modelos/recurring_payment.dart';
@@ -78,10 +79,13 @@ class PantallaPrincipal extends ConsumerWidget {
             ),
           ),
           child: asyncPagos.when(
-            data: (pagos) => _ContenidoPagos(pagos: pagos, ref: ref),
+            data: (pagos) => _ContenidoPagos(pagos: pagos),
             error: (error, stackTrace) => _buildError(context, error),
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
+            loading: () => Center(
+              child: Lottie.asset(
+                'assets/lottie/Loading animation blue.json',
+                width: 180,
+              ),
             ),
           ),
         ),
@@ -117,10 +121,9 @@ class PantallaPrincipal extends ConsumerWidget {
 }
 
 class _ContenidoPagos extends ConsumerWidget {
-  const _ContenidoPagos({required this.pagos, required this.ref});
+  const _ContenidoPagos({required this.pagos});
 
   final List<PagoRecurrente> pagos;
-  final WidgetRef ref;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -258,6 +261,9 @@ class _ContenidoPagos extends ConsumerWidget {
         rutaComprobante: rutaComprobante,
       );
       if (!context.mounted) return;
+      if (rutaComprobante != null) {
+        await _mostrarAnimacionExito(context);
+      }
       messenger.showSnackBar(
         SnackBar(
           content: Text(
@@ -280,6 +286,54 @@ class _ContenidoPagos extends ConsumerWidget {
         return nuevo;
       });
     }
+  }
+
+  Future<void> _mostrarAnimacionExito(BuildContext context) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        Future.delayed(const Duration(milliseconds: 1600), () {
+          if (dialogContext.mounted) {
+            Navigator.of(dialogContext).pop();
+          }
+        });
+        return Dialog(
+          backgroundColor:
+              Theme.of(context).colorScheme.surface.withOpacity(0.95),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Lottie.asset(
+                  'assets/lottie/Payment Success.json',
+                  width: 180,
+                  repeat: false,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '¡Comprobante guardado!',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Tu pago quedó registrado con evidencia.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _eliminarPago(

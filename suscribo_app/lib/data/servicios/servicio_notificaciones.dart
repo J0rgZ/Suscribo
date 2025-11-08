@@ -20,6 +20,10 @@ const String _canalPagosNombre = 'Recordatorios de pagos';
 const String _canalPagosDescripcion =
     'Notificaciones para recordar pagos recurrentes antes de su vencimiento.';
 
+const int _offsetNotificacionAtraso = 1000000;
+const int _horaRecordatorioAtraso = 9;
+const int _minutoRecordatorioAtraso = 0;
+
 /// Proveedor de Riverpod encargado de exponer el servicio de notificaciones
 /// listo para ser inyectado en vistas o controladores.
 final servicioNotificacionesProvider =
@@ -148,9 +152,13 @@ class ServicioNotificaciones {
     );
 
     final detalles = _detallesNotificacion();
-    await cancelarNotificacion(pago.id);
+    await cancelarRecordatoriosPago(pago.id);
 
     final fechaProgramadaTz = tz.TZDateTime.from(fechaProgramada, tz.local);
+    final fechaVencimientoTz =
+        tz.TZDateTime.from(pago.proximaFechaPago, tz.local);
+    final fechaVencimientoFormateada =
+        DateFormat.yMMMMd('es').format(pago.proximaFechaPago.toLocal());
     final fechaFormateada = DateFormat.yMMMMd('es')
         .add_Hm()
         .format(pago.proximaFechaPago.toLocal());
@@ -164,6 +172,31 @@ class ServicioNotificaciones {
       payload: pago.nombre,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
     );
+
+    final ahora = tz.TZDateTime.now(tz.local);
+    final fechaPrimerAtraso =
+        _calcularPrimeraAlertaAtraso(fechaVencimientoTz, ahora);
+
+    if (fechaVencimientoTz.isBefore(ahora)) {
+      await _plugin.show(
+        _idNotificacionAtraso(pago.id),
+        'Pago vencido: ${pago.nombre}',
+        'El pago venció el $fechaVencimientoFormateada y sigue pendiente.',
+        detalles,
+        payload: pago.nombre,
+      );
+    }
+
+    await _plugin.zonedSchedule(
+      _idNotificacionAtraso(pago.id),
+      'Pago vencido: ${pago.nombre}',
+      'Recuerda regularizarlo o marcarlo como pagado.',
+      fechaPrimerAtraso,
+      detalles,
+      payload: pago.nombre,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
 
   /// Cancela la notificación asociada a un identificador concreto.
@@ -171,6 +204,14 @@ class ServicioNotificaciones {
     await _asegurarInicializacion();
     await _plugin.cancel(id);
     debugPrint('Notificación cancelada para Id: $id');
+  }
+
+  /// Cancela todas las notificaciones relacionadas a un pago recurrente.
+  Future<void> cancelarRecordatoriosPago(int id) async {
+    await _asegurarInicializacion();
+    await _plugin.cancel(id);
+    await _plugin.cancel(_idNotificacionAtraso(id));
+    debugPrint('Recordatorios cancelados para el pago Id: $id');
   }
 
   /// Retorna los detalles comunes a todas las notificaciones de la aplicación.
@@ -234,6 +275,34 @@ class ServicioNotificaciones {
   static void _manejarRespuestaBackground(NotificationResponse response) {
     debugPrint(
       'Respuesta de notificación recibida en background: ${response.payload}',
+    );
+  }
+
+  int _idNotificacionAtraso(int id) => id + _offsetNotificacionAtraso;
+
+  tz.TZDateTime _calcularPrimeraAlertaAtraso(
+    tz.TZDateTime fechaVencimiento,
+    tz.TZDateTime ahora,
+  ) {
+    var fecha = _ajustarHora(
+      fechaVencimiento.add(const Duration(days: 1)),
+    );
+
+    while (!fecha.isAfter(ahora)) {
+      fecha = fecha.add(const Duration(days: 1));
+    }
+
+    return fecha;
+  }
+
+  tz.TZDateTime _ajustarHora(tz.TZDateTime base) {
+    return tz.TZDateTime(
+      tz.local,
+      base.year,
+      base.month,
+      base.day,
+      _horaRecordatorioAtraso,
+      _minutoRecordatorioAtraso,
     );
   }
 }

@@ -1,7 +1,7 @@
 name: suscribo_app
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0
 
 environment:
   sdk: ^3.7.2
@@ -22,6 +22,9 @@ dependencies:
   go_router: ^14.2.1
   image_picker: ^1.1.2
   path: ^1.9.0
+  shared_preferences: ^2.2.3
+  permission_handler: ^11.3.0
+  lottie: ^2.7.0
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +35,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/logo/
+    - assets/lottie/

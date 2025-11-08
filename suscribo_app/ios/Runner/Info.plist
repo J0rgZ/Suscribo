@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Suscribo utiliza la cámara para fotografiar comprobantes de pago y mantener tu historial al día.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Suscribo necesita acceder a tu galería para adjuntar comprobantes de pago.</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Suscribo envía recordatorios de pagos próximos y vencidos para ayudarte a mantenerte al día.</string>
 </dict>
 </plist>

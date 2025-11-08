@@ -79,7 +79,8 @@ class ServicioPagos {
     await isar.writeTxn(() async {
       await isar.pagoRecurrentes.delete(id);
     });
-    await _servicioNotificaciones.cancelarNotificacion(id);
+    await _servicioNotificaciones.cancelarRecordatoriosPago(id);
+    await _servicioNotificaciones.cancelarRecordatoriosPago(id);
     debugPrint('Pago con Id $id eliminado y notificación cancelada.');
   }
 

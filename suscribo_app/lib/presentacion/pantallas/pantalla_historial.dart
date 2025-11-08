@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../core/utils/formateadores.dart';
 import '../../data/modelos/historial_pago.dart';
@@ -35,8 +38,12 @@ class PantallaHistorialPagos extends ConsumerWidget {
             );
           },
           error: (error, stackTrace) => _ErrorHistorial(error: error),
-          loading: () =>
-              const Center(child: CircularProgressIndicator.adaptive()),
+          loading: () => Center(
+            child: Lottie.asset(
+              'assets/lottie/Loading animation blue.json',
+              width: 160,
+            ),
+          ),
         ),
       ),
     );
